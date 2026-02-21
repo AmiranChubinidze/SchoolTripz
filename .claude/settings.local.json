@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(cmd //c \"dir C:\\\\Users\\\\user\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\")",
+      "Bash(cmd //c \"type C:\\\\Users\\\\user\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\")",
+      "Bash(cmd //c:*)",
+      "Bash(node -e:*)",
+      "Bash(mongosh:*)",
+      "Bash(npm run seed:*)",
+      "Bash(npm install:*)",
+      "Bash(node_modules/.bin/next:*)",
+      "Bash(npx next build:*)",
+      "Bash(curl:*)",
+      "Bash(pkill:*)",
+      "Bash(python3 -m json.tool:*)",
+      "Bash(MONGODB_URI=\"mongodb+srv://schooltripz:Amikoio33@cluster0.kxhgpou.mongodb.net/?appName=Cluster0\" npx ts-node:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(git -C /c/Users/user/Desktop/SchoolTripz rev-parse:*)",
+      "Bash(git -C /c/Users/user/Desktop/SchoolTripz log --oneline -3)",
+      "Bash(git -C /c/Users/user/Desktop/SchoolTripz init)",
+      "Bash(/c/Users/user/Desktop/SchoolTripz/backend/.env.example:*)",
+      "Bash(/c/Users/user/Desktop/SchoolTripz/frontend/.env.local.example:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

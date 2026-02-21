@@ -1,0 +1,202 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 42 20% 95%;
+    --foreground: 220 53% 7%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 53% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 53% 7%;
+    --primary: 263 83% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 92%;
+    --secondary-foreground: 220 53% 7%;
+    --muted: 220 14% 92%;
+    --muted-foreground: 220 10% 46%;
+    --accent: 263 70% 95%;
+    --accent-foreground: 263 83% 40%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 86%;
+    --input: 220 13% 86%;
+    --ring: 263 83% 58%;
+    --radius: 0.5rem;
+
+    /* Admin control room tokens */
+    --admin-base: #07090F;
+    --admin-surface: #0D1526;
+    --admin-card: #141F35;
+    --admin-elevated: #1C2D47;
+    --admin-border: rgba(255, 255, 255, 0.06);
+    --admin-muted: #6B7A96;
+    --admin-accent: #7C3AED;
+    --admin-lime: #A3E635;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-offwhite text-foreground font-sans antialiased;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', Inter, system-ui, sans-serif;
+    @apply font-bold tracking-tight;
+    line-height: 1.15;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: #080E1A; }
+  ::-webkit-scrollbar-thumb { background: #7C3AED; border-radius: 9999px; }
+}
+
+@layer components {
+  /* Section theming */
+  .section-dark {
+    background-color: #080E1A;
+    color: #F5F4F0;
+  }
+
+  .section-light {
+    background-color: #F5F4F0;
+    color: #080E1A;
+  }
+
+  /* Gradient text animation */
+  .gradient-text {
+    background: linear-gradient(135deg, #7C3AED 0%, #00D9F5 45%, #A78BFA 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-shift 5s ease infinite;
+  }
+
+  .gradient-text-static {
+    background: linear-gradient(135deg, #7C3AED 0%, #00D9F5 60%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Tags */
+  .tag {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-semibold tracking-widest uppercase;
+  }
+
+  .tag-subject {
+    background: rgba(124, 58, 237, 0.15);
+    color: #A78BFA;
+    @apply tag;
+  }
+
+  .tag-dark {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+    @apply tag;
+  }
+
+  /* Status badges */
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  /* Legacy */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-brand-700 transition-all duration-200 cursor-pointer;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer;
+  }
+
+  .skeleton {
+    @apply animate-pulse bg-slate-200 rounded;
+  }
+
+  /* Spotlight card — tracks mouse via --mx/--my set by JS */
+  .spotlight-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .spotlight-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      480px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(124, 58, 237, 0.13) 0%,
+      transparent 65%
+    );
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .spotlight-card:hover::before {
+    opacity: 1;
+  }
+
+  .spotlight-card > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Barlow Condensed for authoritative KPI numerics */
+  .stat-number {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+}
+
+/* Spark animation */
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes clickSpark {
+  0% {
+    transform: translate(-50%, -50%) translate(0, 0) scale(1.4);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) translate(var(--dx, 0px), var(--dy, -50px)) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes sparkFly {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--spark-x, 0px), var(--spark-y, -40px)) scale(0);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
