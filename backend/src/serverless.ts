@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
-import { AppModule } from '../src/app.module';
+import { AppModule } from './app.module';
 import type { Request, Response } from 'express';
 
 let app: NestExpressApplication | null = null;
@@ -56,7 +56,7 @@ async function getApp(): Promise<NestExpressApplication> {
   return app;
 }
 
-module.exports = async (req: Request, res: Response): Promise<void> => {
+export default async (req: Request, res: Response): Promise<void> => {
   // Handle OPTIONS preflight immediately — no cold-start delay
   if (req.method === 'OPTIONS') {
     applyCorsHeaders(req, res);
