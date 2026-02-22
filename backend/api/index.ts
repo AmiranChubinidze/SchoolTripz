@@ -4,7 +4,26 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
 import type { Request, Response } from 'express';
 
-let app: NestExpressApplication;
+let app: NestExpressApplication | null = null;
+
+function getAllowedOrigins(): string[] {
+  return (process.env.CORS_ORIGIN || 'http://localhost:3000')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean);
+}
+
+function applyCorsHeaders(req: Request, res: Response): void {
+  const origin = req.headers.origin as string | undefined;
+  const allowed = getAllowedOrigins();
+  if (origin && allowed.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,Accept');
+    res.setHeader('Vary', 'Origin');
+  }
+}
 
 async function getApp(): Promise<NestExpressApplication> {
   if (app) return app;
@@ -24,18 +43,11 @@ async function getApp(): Promise<NestExpressApplication> {
     }),
   );
 
-  const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000')
-    .split(',')
-    .map((o) => o.trim())
-    .filter(Boolean);
-
+  const allowed = getAllowedOrigins();
   app.enableCors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error(`CORS: ${origin} not allowed`));
-      }
+      if (!origin || allowed.includes(origin)) callback(null, true);
+      else callback(new Error(`CORS: ${origin} not allowed`));
     },
     credentials: true,
   });
@@ -44,8 +56,27 @@ async function getApp(): Promise<NestExpressApplication> {
   return app;
 }
 
-export default async (req: Request, res: Response) => {
-  const nestApp = await getApp();
-  const expressApp = nestApp.getHttpAdapter().getInstance();
-  expressApp(req, res);
+export default async (req: Request, res: Response): Promise<void> => {
+  // Handle OPTIONS preflight immediately — before the app even initialises.
+  // This avoids cold-start timeouts blocking CORS preflight.
+  if (req.method === 'OPTIONS') {
+    applyCorsHeaders(req, res);
+    res.status(204).end();
+    return;
+  }
+
+  try {
+    const nestApp = await getApp();
+    const expressInstance = nestApp.getHttpAdapter().getInstance();
+    expressInstance(req, res);
+  } catch (err: any) {
+    console.error('[serverless] init error:', err?.message ?? err);
+    // Always send CORS headers so the browser can read the error body
+    applyCorsHeaders(req, res);
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Server failed to initialise',
+      detail: err?.message ?? String(err),
+    });
+  }
 };
