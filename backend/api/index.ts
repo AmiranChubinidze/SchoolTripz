@@ -56,9 +56,8 @@ async function getApp(): Promise<NestExpressApplication> {
   return app;
 }
 
-export default async (req: Request, res: Response): Promise<void> => {
-  // Handle OPTIONS preflight immediately — before the app even initialises.
-  // This avoids cold-start timeouts blocking CORS preflight.
+module.exports = async (req: Request, res: Response): Promise<void> => {
+  // Handle OPTIONS preflight immediately — no cold-start delay
   if (req.method === 'OPTIONS') {
     applyCorsHeaders(req, res);
     res.status(204).end();
@@ -71,7 +70,6 @@ export default async (req: Request, res: Response): Promise<void> => {
     expressInstance(req, res);
   } catch (err: any) {
     console.error('[serverless] init error:', err?.message ?? err);
-    // Always send CORS headers so the browser can read the error body
     applyCorsHeaders(req, res);
     res.status(500).json({
       statusCode: 500,
